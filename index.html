@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b5cab">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg">
+<title>HVAC Tech Cheat Sheet</title>
+<style>
+:root{--blue:#0b5cab;--bg:#f4f4f4;--card:#fff;--text:#151515}
+*{box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:var(--bg);color:var(--text);margin:0}
+header{background:var(--blue);color:#fff;padding:16px;position:sticky;top:0;z-index:2;box-shadow:0 2px 8px #0003}
+h1{font-size:22px;margin:0 0 10px}
+input{width:100%;padding:12px;font-size:16px;border-radius:8px;border:0}
+main{padding:14px;max-width:920px;margin:auto}
+.row{display:grid;grid-template-columns:1fr;gap:10px}
+details{background:var(--card);border-radius:10px;padding:12px;border:1px solid #ddd}
+summary{font-weight:700;font-size:18px;cursor:pointer}
+pre{white-space:pre-wrap;font-family:inherit;line-height:1.45}
+.install{margin-top:10px;background:#fff;color:var(--blue);border:0;border-radius:8px;padding:10px 12px;font-weight:700;display:none}
+.note{font-size:13px;opacity:.9;margin-top:8px}
+@media(min-width:760px){.row{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header>
+<h1>HVAC Tech Cheat Sheet</h1>
+<input id="search" placeholder="Search: capacitor, boiler, superheat, airflow...">
+<button id="installBtn" class="install">Install App</button>
+<div class="note">Works offline after first open.</div>
+</header>
+<main><div id="content" class="row"></div></main>
+
+<script>
+const sections=[
+["Electrical Basics",`Ohm's Law:
+V = A × Ω
+A = V ÷ Ω
+Ω = V ÷ A
+Watts = Volts × Amps
+
+Continuity:
+Beep = closed path
+No beep / OL = open path
+
+Common meter checks:
+24VAC controls
+120VAC line voltage
+208/230VAC condenser/compressor
+Ohms for resistance
+µF for capacitors`],
+
+["Typical HVAC Voltages",`Thermostat/control circuit: 24VAC
+Gas furnace controls: 24VAC
+Indoor blower: 120V or 240V
+Condenser fan: 208/230V
+Compressor: 208/230V
+Mini-split: commonly 208/230V`],
+
+["Refrigeration Cycle",`1. Compressor:
+Low-pressure vapor in, high-pressure hot vapor out.
+
+2. Condenser:
+Rejects heat outside. Vapor condenses into liquid.
+
+3. Expansion device:
+Drops pressure. Refrigerant gets cold.
+
+4. Evaporator:
+Absorbs indoor heat. Refrigerant boils into vapor.
+
+Large insulated line = suction line
+Small bare line = liquid line`],
+
+["Superheat & Subcooling",`Superheat:
+Usually used to charge fixed-orifice systems.
+
+High superheat:
+Low charge, restriction, low feed, or high load.
+
+Low superheat:
+Overfeeding, overcharge, or poor airflow issue.
+
+Subcooling:
+Usually used to charge TXV systems.
+
+High subcooling:
+Possible overcharge or restriction.
+
+Low subcooling:
+Possible low charge.`],
+
+["Cooling Sequence",`Thermostat calls for cooling
+→ Indoor blower starts
+→ Contactor energizes
+→ Compressor starts
+→ Condenser fan starts
+→ Evaporator absorbs indoor heat
+→ Condenser rejects heat outside
+→ Thermostat satisfies
+→ System shuts off`],
+
+["Gas Furnace Sequence",`Thermostat calls for heat
+→ Inducer motor starts
+→ Pressure switch closes
+→ Igniter heats or sparks
+→ Gas valve opens
+→ Burners ignite
+→ Flame sensor proves flame
+→ Blower starts
+→ Thermostat satisfies
+→ Gas valve closes
+→ Blower runs cool-down
+→ System shuts off`],
+
+["Heat Pump Basics",`A heat pump is an AC that can reverse.
+
+Cooling:
+Indoor coil absorbs heat.
+Outdoor coil rejects heat.
+
+Heating:
+Outdoor coil absorbs heat.
+Indoor coil rejects heat inside.
+
+Reversing valve changes refrigerant direction.
+Defrost temporarily switches operation to clear outdoor coil frost.`],
+
+["Gas Boiler",`A gas boiler heats water.
+
+Thermostat calls
+→ Safety checks
+→ Igniter starts
+→ Gas valve opens
+→ Burners light
+→ Flame sensor proves flame
+→ Heat exchanger warms water
+→ Circulator pump moves hot water
+→ Radiators/baseboards heat space`],
+
+["Oil Boiler",`An oil boiler heats water using heating oil.
+
+Oil pump pulls fuel from tank.
+Nozzle sprays oil into fine mist.
+Blower mixes air with oil.
+Electrodes ignite mixture.
+Flame heats heat exchanger.
+Circulator moves hot water through system.`],
+
+["Water Source Heat Pump",`Uses a water loop instead of outdoor air.
+
+Cooling:
+Removes heat from room and rejects it into water loop.
+
+Heating:
+Absorbs heat from water loop and releases it indoors.
+
+Common in hotels, schools, apartments, and office buildings.`],
+
+["Airflow",`Target airflow:
+About 400 CFM per ton.
+
+2 ton = 800 CFM
+3 ton = 1200 CFM
+4 ton = 1600 CFM
+5 ton = 2000 CFM
+
+Airflow first, refrigerant second.`],
+
+["Temperature Split",`Typical cooling split:
+16°F to 22°F
+
+Example:
+Return air = 75°F
+Supply air = 56°F
+Split = 19°F
+
+Low split can mean airflow, charge, compressor, or load issue.`],
+
+["Capacitors",`Capacitor formula:
+µF = (Amps × 2652) ÷ Volts
+
+Replace if outside rating tolerance.
+
+Common symptoms:
+Humming motor
+Hard starting
+Fan not spinning
+Compressor not starting`],
+
+["Contactors & Transformers",`Contactor:
+24VAC coil pulls in.
+High voltage passes to compressor and condenser fan.
+
+Transformer:
+Primary = 120V or 240V
+Secondary = 24VAC
+
+No 24V? Check transformer, fuse, safety switch, and wiring.`],
+
+["Common Safety Devices",`High-pressure switch
+Low-pressure switch
+Float switch
+Rollout switch
+Limit switch
+Pressure switch
+Flame sensor
+Low-water cutoff
+Pressure relief valve
+Fuse or breaker`],
+
+["Troubleshooting: No Cooling",`1. Thermostat settings
+2. Breakers/disconnect
+3. Air filter
+4. Indoor blower
+5. 24V call
+6. Contactor
+7. Capacitor
+8. Condenser fan
+9. Compressor
+10. Refrigerant pressures/temps`],
+
+["Troubleshooting: No Heat Gas Furnace",`1. Thermostat
+2. Power
+3. Door switch
+4. Inducer
+5. Pressure switch
+6. Igniter
+7. Gas valve
+8. Flame sensor
+9. Blower
+10. Limit/rollout switches`],
+
+["Troubleshooting: Boiler",`1. Thermostat call
+2. Power
+3. Water pressure
+4. Burner operation
+5. Flame proving
+6. Boiler temperature
+7. Circulator pump
+8. Zone valves
+9. Air in system
+10. Relief valve/expansion tank`],
+
+["Tools",`Multimeter
+Clamp meter
+Manometer
+Refrigerant gauges
+Temperature clamps
+Micron gauge
+Vacuum pump
+Recovery machine
+Refrigerant scale
+Nitrogen tank
+Leak detector
+Combustion analyzer`],
+
+["Safety Rules",`Turn power off before servicing.
+Verify power is off with a meter.
+Discharge capacitors safely.
+Never vent refrigerant.
+Check for gas leaks.
+Do not leave safety switches bypassed.
+Use eye protection and gloves.
+When unsure, stop and verify.`]
+];
+
+const content=document.getElementById("content");
+function render(filter=""){
+  content.innerHTML="";
+  const f=filter.toLowerCase();
+  sections.filter(s=>(s[0]+" "+s[1]).toLowerCase().includes(f)).forEach(s=>{
+    const d=document.createElement("details");
+    d.innerHTML=`<summary>${s[0]}</summary><pre>${s[1]}</pre>`;
+    content.appendChild(d);
+  });
+}
+render();
+document.getElementById("search").addEventListener("input", e=>render(e.target.value));
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./service-worker.js");
+}
+
+let deferredPrompt;
+const installBtn=document.getElementById("installBtn");
+window.addEventListener("beforeinstallprompt", e=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  installBtn.style.display="inline-block";
+});
+installBtn.addEventListener("click", async ()=>{
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt=null;
+  installBtn.style.display="none";
+});
+</script>
+</body>
+</html>

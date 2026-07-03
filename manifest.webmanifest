@@ -1,0 +1,17 @@
+{
+  "name": "HVAC Tech Cheat Sheet",
+  "short_name": "HVAC Cheat",
+  "description": "Offline HVAC technician cheat sheet and field reference.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f4f4",
+  "theme_color": "#0b5cab",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

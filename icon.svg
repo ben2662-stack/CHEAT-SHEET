@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<rect width="512" height="512" rx="90" fill="#0b5cab"/>
+<text x="256" y="220" font-family="Arial, sans-serif" font-size="88" font-weight="700" fill="white" text-anchor="middle">HVAC</text>
+<text x="256" y="315" font-family="Arial, sans-serif" font-size="58" font-weight="700" fill="#d8ecff" text-anchor="middle">PRO</text>
+<path d="M120 365h272" stroke="white" stroke-width="22" stroke-linecap="round"/>
+<path d="M175 405h162" stroke="#d8ecff" stroke-width="18" stroke-linecap="round"/>
+</svg>
